@@ -1,17 +1,17 @@
 class Personaje {
-    constructor(id, imagen, nombre, clase, nivel, fuerza, destreza, constitucion, inteligencia, sabiduria, carisma, danio) {
-        this.id = id;
-        this.imagen = imagen;
-        this.nombre = nombre;
-        this.clase = clase;
-        this.nivel = nivel;
-        this.fuerza = fuerza;
-        this.destreza = destreza;
-        this.constitucion = constitucion;
-        this.inteligencia = inteligencia;
-        this.sabiduria = sabiduria;
-        this.carisma = carisma;
-        this.danio = danio;
+    constructor(personaje) {
+        this.id = personaje.id;
+        this.imagen = personaje.imagen;
+        this.nombre = personaje.nombre;
+        this.clase = personaje.clase;
+        this.nivel = personaje.nivel;
+        this.fuerza = personaje.fuerza;
+        this.destreza = personaje.destreza;
+        this.constitucion = personaje.constitucion;
+        this.inteligencia = personaje.inteligencia;
+        this.sabiduria = personaje.sabiduria;
+        this.carisma = personaje.carisma;
+        this.danio = personaje.danio;
     }
 
     calcularPunteria() {
@@ -23,7 +23,7 @@ class Personaje {
     }
 
     calcularHitPoint() {
-        return (Math.floor((this.constitucion - 10) / 2) * 5 * this.nivel);
+        return (20 + Math.floor((this.constitucion - 10) / 2) * 5 * this.nivel);
     }
 
     calcularMana() {
