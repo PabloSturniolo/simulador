@@ -18,11 +18,10 @@ class CatalogoPersonajes {
     }
 
     modificarPersonaje(nombreABuscar, personaje) {
-        let personajeEncontrado = this.personajes.find((x) =>
-            x.nombre.includes(nombreABuscar)
-        )
+        let personajeEncontrado = this.personajes.find((x) => x.nombre === nombreABuscar)
         if (personajeEncontrado) {
             personajeEncontrado.nombre = personaje.nombre;
+            personajeEncontrado.clase = personaje.clase
             personajeEncontrado.nivel = personaje.nivel;
             personajeEncontrado.fuerza = personaje.fuerza;
             personajeEncontrado.destreza = personaje.destreza;
@@ -31,7 +30,7 @@ class CatalogoPersonajes {
             personajeEncontrado.sabiduria = personaje.sabiduria;
             personajeEncontrado.carisma = personaje.carisma;
             personajeEncontrado.danio = personaje.danio;
-            console.log("Personaje Modificado", this.villanos);
+            console.log("Personaje Modificado", this.personajes);
         }
         else {
             alert("NO PUEDO MODIFICAR")

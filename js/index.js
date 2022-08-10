@@ -1,39 +1,47 @@
-const personajes = [
-    new Personaje(
-        1,
-        "personaje.jpeg",
-        "Pablo",
-        "Programador",
-        3,
-        20,
-        20,
-        20,
-        20,
-        20,
-        20,
-        20
-    ),
-    new Personaje(
-        2,
-        "personaje.jpeg",
-        "David",
-        "Programador",
-        3,
-        20,
-        20,
-        20,
-        20,
-        20,
-        20,
-        20
-    ),
+let per = sessionStorage.getItem("personajes");
+const personajesGuardados = JSON.parse(per) || [
+    {
+        id: 1,
+        imagen: "personaje.jpeg",
+        nombre: "Pablo",
+        clase: "Programador",
+        nivel: 3,
+        fuerza: 20,
+        destreza: 20,
+        constitucion: 20,
+        inteligencia: 20,
+        sabiduria: 20,
+        carisma: 20,
+        danio: 20
+    },
+    {
+        id: 2,
+        imagen: "personaje.jpeg",
+        nombre: "David",
+        clase: "Programador",
+        nivel: 3,
+        fuerza: 20,
+        destreza: 20,
+        constitucion: 20,
+        inteligencia: 20,
+        sabiduria: 20,
+        carisma: 20,
+        danio: 20
+    }
 ]
-let id = 3;
+let id = personajesGuardados.length + 1;
+let personajes = [];
+let personajeId;
+let p;
+let selecionados = [];
+for (const objeto of personajesGuardados) {
+    personajes.push(new Personaje(objeto));
+}
 const catalogoPersonajes = new CatalogoPersonajes(personajes);
-console.log("PERSONAJES ORIGINALES", catalogoPersonajes.personajes)
+console.log("PERSONAJES GUARDADOS", catalogoPersonajes.personajes)
 
 listarPersonajes();
-
+let nombreBuscar;
 let unoALaVez = false;
 const btnMas = document.getElementById("mas");
 btnMas.onclick = () => {
@@ -42,77 +50,264 @@ btnMas.onclick = () => {
         nuevoPersonaje();
         const formulario = document.getElementById("formulario");
         formulario.addEventListener("submit", function (e) {
-            const nombre = document.getElementById("nombre");
-            const clase = document.getElementById("clase");
-            const nivel = document.getElementById("nivel");
-            const fuerza = document.getElementById("fuerza");
-            const destreza = document.getElementById("destreza");
-            const constitucion = document.getElementById("constitucion");
-            const inteligencia = document.getElementById("inteligencia");
-            const sabiduria = document.getElementById("sabiduria");
-            const carisma = document.getElementById("carisma");
-            const danio = document.getElementById("danio");
+            const nombre = document.getElementById("nombre").value;
+            const clase = document.getElementById("clase").value;
+            const nivel = Number(document.getElementById("nivel").value);
+            const fuerza = Number(document.getElementById("fuerza").value);
+            const destreza = Number(document.getElementById("destreza").value);
+            const constitucion = Number(document.getElementById("constitucion").value);
+            const inteligencia = Number(document.getElementById("inteligencia").value);
+            const sabiduria = Number(document.getElementById("sabiduria").value);
+            const carisma = Number(document.getElementById("carisma").value);
+            const danio = Number(document.getElementById("danio").value);
+            if (nombre == "" || clase == "" || nivel == "" || fuerza == "" || destreza == "" || constitucion == "" || inteligencia == "" || sabiduria == "" || carisma == "" || danio == "")
+                e.preventDefault();
+            else {
+                p = {
+                    id: id++,
+                    imagen: "avatar.png",
+                    nombre: nombre,
+                    clase: clase,
+                    nivel: nivel,
+                    fuerza: fuerza,
+                    destreza: destreza,
+                    constitucion: constitucion,
+                    inteligencia: inteligencia,
+                    sabiduria: sabiduria,
+                    carisma: carisma,
+                    danio: danio
+                };
+                catalogoPersonajes.agregarPersonaje(new Personaje(p));
+                listarPersonajes();
+                const jsonCatalogo = JSON.stringify(catalogoPersonajes.personajes);
+                sessionStorage.setItem("personajes", jsonCatalogo);
+                unoALaVez = false;
+            }
+        });
+        const btnCancelar = document.getElementById(`cancelar`);
+        btnCancelar.onclick = () => {
+            listarPersonajes();
+            unoALaVez = false;
+        }
+    }
+};
+
+function eventoModificar() {
+    const elementosTabla = document.getElementsByClassName("card");
+    for (let i = 1; i <= elementosTabla.length; i++) {
+        btnModificar = document.getElementById(`modificar${i}`);
+        btnModificar.onclick = () => {
+            if (unoALaVez == false) {
+                unoALaVez = true;
+                inputNombre = document.getElementById(`nombre${i}`);
+                inputClase = document.getElementById(`clase${i}`);
+                inputNivel = document.getElementById(`nivel${i}`);
+                inputFuerza = document.getElementById(`fuerza${i}`);
+                inputDestreza = document.getElementById(`destreza${i}`);
+                inputConstitucion = document.getElementById(`constitucion${i}`);
+                inputInteligencia = document.getElementById(`inteligencia${i}`);
+                inputSabiduria = document.getElementById(`sabiduria${i}`);
+                inputCarisma = document.getElementById(`carisma${i}`);
+                inputDanio = document.getElementById(`danio${i}`);
+                nombreBuscar = inputNombre.innerText;
+
+                // Modifico nombre
+                const nodoInputNombre = document.createElement("input");
+                nodoInputNombre.value = inputNombre.innerText;
+                inputNombre.innerText = "Nombre: ";
+                nodoInputNombre.setAttribute("id", "nombre");
+                nodoInputNombre.setAttribute("type", "text");
+                nodoInputNombre.setAttribute("placeholder", "Nombre");
+                inputNombre.appendChild(nodoInputNombre);
+                // Modifico clase
+                const nodoInputClase = document.createElement("input");
+                nodoInputClase.value = inputClase.innerText.split(" ")[1];
+                inputClase.innerText = "Clase: ";
+                nodoInputClase.setAttribute("id", "clase");
+                nodoInputClase.setAttribute("type", "text");
+                nodoInputClase.setAttribute("placeholder", "Clase");
+                inputClase.appendChild(nodoInputClase);
+                // Modifico nivel
+                const nodoInputNivel = document.createElement("input");
+                nodoInputNivel.value = inputNivel.innerText.split(" ")[1];
+                inputNivel.innerText = "Nivel: ";
+                nodoInputNivel.setAttribute("id", "nivel");
+                nodoInputNivel.setAttribute("type", "number");
+                nodoInputNivel.setAttribute("placeholder", "Nivel");
+                inputNivel.appendChild(nodoInputNivel);
+                // Modifico fuerza
+                const nodoInputFuerza = document.createElement("input");
+                nodoInputFuerza.value = inputFuerza.innerText.split(" ")[1];
+                inputFuerza.innerText = "Fuerza: ";
+                nodoInputFuerza.setAttribute("id", "fuerza");
+                nodoInputFuerza.setAttribute("type", "number");
+                nodoInputFuerza.setAttribute("placeholder", "Fuerza");
+                inputFuerza.appendChild(nodoInputFuerza);
+                // Modifico destreza
+                const nodoInputDestreza = document.createElement("input");
+                nodoInputDestreza.value = inputDestreza.innerText.split(" ")[1];
+                inputDestreza.innerText = "Destreza: ";
+                nodoInputDestreza.setAttribute("id", "destreza");
+                nodoInputDestreza.setAttribute("type", "number");
+                nodoInputDestreza.setAttribute("placeholder", "Destreza");
+                inputDestreza.appendChild(nodoInputDestreza);
+                // Modifico constitucion
+                const nodoInputConstitucion = document.createElement("input");
+                nodoInputConstitucion.value = inputConstitucion.innerText.split(" ")[1];
+                inputConstitucion.innerText = "Constitucion: ";
+                nodoInputConstitucion.setAttribute("id", "constitucion");
+                nodoInputConstitucion.setAttribute("type", "number");
+                nodoInputConstitucion.setAttribute("placeholder", "Constitucion");
+                inputConstitucion.appendChild(nodoInputConstitucion);
+                // Modifico inteligencia
+                const nodoInputInteligencia = document.createElement("input");
+                nodoInputInteligencia.value = inputInteligencia.innerText.split(" ")[1];
+                inputInteligencia.innerText = "Inteligencia: ";
+                nodoInputInteligencia.setAttribute("id", "inteligencia");
+                nodoInputInteligencia.setAttribute("type", "number");
+                nodoInputInteligencia.setAttribute("placeholder", "Inteligencia");
+                inputInteligencia.appendChild(nodoInputInteligencia);
+                // Modifico sabiduria
+                const nodoInputSabiduria = document.createElement("input");
+                nodoInputSabiduria.value = inputSabiduria.innerText.split(" ")[1];
+                inputSabiduria.innerText = "Sabiduria: ";
+                nodoInputSabiduria.setAttribute("id", "sabiduria");
+                nodoInputSabiduria.setAttribute("type", "number");
+                nodoInputSabiduria.setAttribute("placeholder", "Sabiduria");
+                inputSabiduria.appendChild(nodoInputSabiduria);
+                // Modifico carisma
+                const nodoInputCarisma = document.createElement("input");
+                nodoInputCarisma.value = inputCarisma.innerText.split(" ")[1];
+                inputCarisma.innerText = "Carisma: ";
+                nodoInputCarisma.setAttribute("id", "carisma");
+                nodoInputCarisma.setAttribute("type", "number");
+                nodoInputCarisma.setAttribute("placeholder", "Carisma");
+                inputCarisma.appendChild(nodoInputCarisma);
+                // Modifico danio
+                const nodoInputDanio = document.createElement("input");
+                nodoInputDanio.value = inputDanio.innerText.split(" ")[1];
+                inputDanio.innerText = "Danio: ";
+                nodoInputDanio.setAttribute("id", "danio");
+                nodoInputDanio.setAttribute("type", "number");
+                nodoInputDanio.setAttribute("placeholder", "Danio");
+                inputDanio.appendChild(nodoInputDanio);
+
+                // Agrego botones aceptar y cancelar
+                btnModificar.remove();
+                btoneraCard = document.getElementById(`btn-card-${i}`)
+                // Aceptar
+                const nodoAceptar = document.createElement("input");
+                nodoAceptar.setAttribute("id", "aceptar");
+                nodoAceptar.setAttribute("class", "btn btn-primary");
+                nodoAceptar.setAttribute("type", "submit");
+                nodoAceptar.setAttribute("value", "Aceptar");
+                btoneraCard.appendChild(nodoAceptar);
+                // Cancelar
+                const nodoCancelar = document.createElement("input");
+                nodoCancelar.setAttribute("id", `cancelar`);
+                nodoCancelar.setAttribute("class", "btn btn-primary");
+                nodoCancelar.setAttribute("type", "button");
+                nodoCancelar.setAttribute("value", "Cancelar");
+                btoneraCard.appendChild(nodoCancelar);
+
+                const btnCancelar = document.getElementById(`cancelar`);
+                btnCancelar.onclick = () => {
+                    listarPersonajes();
+                    unoALaVez = false;
+                }
+            }
+        }
+
+        let formulario = document.getElementById(`formulario${i}`);
+        formulario.addEventListener("submit", function (e) {
+            const nombre = document.getElementById("nombre").value;
+            const clase = document.getElementById("clase").value;
+            const nivel = Number(document.getElementById("nivel").value);
+            const fuerza = Number(document.getElementById("fuerza").value);
+            const destreza = Number(document.getElementById("destreza").value);
+            const constitucion = Number(document.getElementById("constitucion").value);
+            const inteligencia = Number(document.getElementById("inteligencia").value);
+            const sabiduria = Number(document.getElementById("sabiduria").value);
+            const carisma = Number(document.getElementById("carisma").value);
+            const danio = Number(document.getElementById("danio").value);
             if (nombre.value == "" || clase.value == "" || nivel.value == "" || fuerza.value == "" || destreza.value == "" || constitucion.value == "" || inteligencia.value == "" || sabiduria.value == "" || carisma.value == "" || danio.value == "")
                 e.preventDefault();
             else {
-                catalogoPersonajes.agregarPersonaje(new Personaje(id++, "avatar.png", nombre.value, clase.value, nivel.value, fuerza.value, destreza.value, constitucion.value, inteligencia.value, sabiduria.value, carisma.value, danio.value));
+                p = {
+                    id: i,
+                    imagen: "avatar.png",
+                    nombre: nombre,
+                    clase: clase,
+                    nivel: nivel,
+                    fuerza: fuerza,
+                    destreza: destreza,
+                    constitucion: constitucion,
+                    inteligencia: inteligencia,
+                    sabiduria: sabiduria,
+                    carisma: carisma,
+                    danio: danio
+                };
+                catalogoPersonajes.modificarPersonaje(nombreBuscar, new Personaje(p));
                 listarPersonajes();
+                const jsonCatalogo = JSON.stringify(catalogoPersonajes.personajes);
+                sessionStorage.setItem("personajes", jsonCatalogo);
                 unoALaVez = false;
             }
         });
     }
-};
+}
 
+function eventoSelecionar() {
+    const nodoCard = document.getElementsByClassName("card");
+    for (let nodo of nodoCard) {
+        nodo.onclick = () => {
+            personajeId = nodo.children[1].id.split("formulario")[1];
+            if (selecionados.includes(personajeId)) {
+                nodo.setAttribute("style", "width: 100%;");
+                selecionados.indexOf(personajeId) != -1 && selecionados.splice(selecionados.indexOf(personajeId), 1);
+            }
+            else {
+                if (selecionados.length < 2 && !selecionados.includes(personajeId)) {
+                    nodo.setAttribute("style", "border: solid 3px #1eff00");
+                    selecionados.push(personajeId);
+                }
+            }
+        }
+    }
+}
 
 const btnLuchar = document.getElementById("luchar");
 btnLuchar.onclick = () => {
-    selecionar();
-}
-
-function selecionar() {
-    let nombre1 = prompt(`INGRESE NOMBRE DEL PRIMER LUCHADOR`);
-    let personaje1 = personajes.find(x => x.nombre === nombre1);
-    while (personaje1 == undefined) {
-        alert("EL NOMBRE INGRESADO NO PERTENECE A NINGUN PERSONAJE");
-        nombre1 = prompt(`INGRESE NOMBRE DEL PRIMER LUCHADOR`);
-        personaje1 = personajes.find(x => x.nombre === nombre1);
-    }
-
-    let nombre2 = prompt(`INGRESE NOMBRE DEL SEGUNDO LUCHADOR`);
-    let personaje2 = personajes.find(x => x.nombre === nombre2);
-    while (personaje2 == undefined) {
-        alert("EL NOMBRE INGRESADO NO PERTENECE A NINGUN PERSONAJE");
-        nombre2 = prompt(`INGRESE NOMBRE DEL SEGUNDO LUCHADOR`);
-        personaje2 = personajes.find(x => x.nombre === nombre2);
-    }
-    resolucionDeConflictosLaborales(personaje1, personaje2); // :)
+    [a, b] = selecionados;
+    selecionados.length === 2 && resolucionDeConflictosLaborales(catalogoPersonajes.personajes.find(x => x.id == a), catalogoPersonajes.personajes.find(x => x.id == b));
 }
 
 function nuevoPersonaje() {
     const nodoTabla = document.getElementById("tabla");
     const tablaElemento = document.createElement("div");
     tablaElemento.innerHTML = `<div class="card" style="width: 100%;">
-                                        <img src="../imagenes/avatar.png" class="card-img-top" alt="imagen del personaje">
-                                        <form id="formulario">
-                                            <div class="card-body">
-                                                <h5 class="card-title">Nombre: <input id="nombre" type="text" placeholder="Nombre"></h5>
-                                                <p class="card-text">Clase: <input id="clase" type="text" placeholder="Clase"></p>
-                                                <p class="card-text">Nivel: <input id="nivel" type="number" placeholder="Nivel"></p>
-                                            </div>
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">Fuerza: <input id="fuerza" type="number" placeholder="Fuerza"></li>
-                                                <li class="list-group-item">Destreza: <input id="destreza" type="number" placeholder="Destreza"></li>
-                                                <li class="list-group-item">Constitucion: <input id="constitucion" type="number" placeholder="Constitucion"></li>
-                                                <li class="list-group-item">Inteligencia: <input id="inteligencia" type="number" placeholder="Inteligencia"></li>
-                                                <li class="list-group-item">Sabiduria: <input id="sabiduria" type="number" placeholder="Sabiduria"></li>
-                                                <li class="list-group-item">Carisma: <input id="carisma" type="number" placeholder="Carisma"></li>
-                                                <li class="list-group-item">Danio: <input id="danio" type="number" placeholder="Danio"></li>
-                                            </ul>
-                                            <div class="card-body">
-                                                <input id="aceptar" class="btn btn-primary" type="submit" value="Aceptar">
-                                            </div>
-                                        </form>
-                                    </div>`;
+                                    <img src="../imagenes/avatar.png" class="card-img-top" alt="imagen del personaje">
+                                    <form id="formulario">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Nombre: <input id="nombre" type="text" placeholder="Nombre"></h5>
+                                            <p class="card-text">Clase: <input id="clase" type="text" placeholder="Clase"  value = "Tester"></p>
+                                            <p class="card-text">Nivel: <input id="nivel" type="number" placeholder="Nivel" value = "1"></p>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Fuerza: <input id="fuerza" type="number" placeholder="Fuerza" value = "8"></li>
+                                            <li class="list-group-item">Destreza: <input id="destreza" type="number" placeholder="Destreza" value = "8"></li>
+                                            <li class="list-group-item">Constitucion: <input id="constitucion" type="number" placeholder="Constitucion" value = "8"></li>
+                                            <li class="list-group-item">Inteligencia: <input id="inteligencia" type="number" placeholder="Inteligencia" value = "8"></li>
+                                            <li class="list-group-item">Sabiduria: <input id="sabiduria" type="number" placeholder="Sabiduria" value = "8"></li>
+                                            <li class="list-group-item">Carisma: <input id="carisma" type="number" placeholder="Carisma" value = "8"></li>
+                                            <li class="list-group-item">Danio: <input id="danio" type="number" placeholder="Danio" value = "10"></li>
+                                        </ul>
+                                        <div class="card-body">
+                                            <input id="aceptar" class="btn btn-primary" type="submit" value="Aceptar">
+                                            <input id="cancelar" class="btn btn-primary" type="button" value="Cancelar">
+                                        </div>
+                                    </form>
+                                </div>`;
 
     nodoTabla.appendChild(tablaElemento);
 }
@@ -123,28 +318,32 @@ function listarPersonajes() {
     catalogoPersonajes.personajes.forEach((personaje) => {
         const tablaElemento = document.createElement("div");
         tablaElemento.innerHTML = `<div class="card" style="width: 100%;">
-                                    <img src="../imagenes/${personaje.imagen}" class="card-img-top" alt="imagen del personaje">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${personaje.nombre}</h5>
-                                        <p class="card-text">Clase: ${personaje.clase}</p>
-                                        <p class="card-text">Nivel: ${personaje.nivel}</p>
-                                    </div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">Fuerza: ${personaje.fuerza}</li>
-                                        <li class="list-group-item">Destreza: ${personaje.destreza}</li>
-                                        <li class="list-group-item">Constitucion: ${personaje.constitucion}</li>
-                                        <li class="list-group-item">Inteligencia: ${personaje.inteligencia}</li>
-                                        <li class="list-group-item">Sabiduria: ${personaje.sabiduria}</li>
-                                        <li class="list-group-item">Carisma: ${personaje.carisma}</li>
-                                        <li class="list-group-item">Danio: ${personaje.danio}</li>
-                                    </ul>
-                                    <div class="card-body">
-                                        <a id="modificar${personaje.id}" class="btn btn-primary modificar">Modificar</a>
-                                    </div>
-                                </div>`;
+                                        <img src="../imagenes/${personaje.imagen}" class="card-img-top" alt="imagen del personaje">
+                                        <form id="formulario${personaje.id}">
+                                            <div class="card-body">
+                                                <h5 id="nombre${personaje.id}" class="card-title">${personaje.nombre}</h5>
+                                                <p id="clase${personaje.id}" class="card-text">Clase: ${personaje.clase}</p>
+                                                <p id="nivel${personaje.id}" class="card-text">Nivel: ${personaje.nivel}</p>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li id="fuerza${personaje.id}" class="list-group-item">Fuerza: ${personaje.fuerza}</li>
+                                                <li id="destreza${personaje.id}" class="list-group-item">Destreza: ${personaje.destreza}</li>
+                                                <li id="constitucion${personaje.id}" class="list-group-item">Constitucion: ${personaje.constitucion}</li>
+                                                <li id="inteligencia${personaje.id}" class="list-group-item">Inteligencia: ${personaje.inteligencia}</li>
+                                                <li id="sabiduria${personaje.id}" class="list-group-item">Sabiduria: ${personaje.sabiduria}</li>
+                                                <li id="carisma${personaje.id}" class="list-group-item">Carisma: ${personaje.carisma}</li>
+                                                <li id="danio${personaje.id}" class="list-group-item">Danio: ${personaje.danio}</li>
+                                            </ul>
+                                            <div id="btn-card-${personaje.id}" class="card-body">
+                                                <a id="modificar${personaje.id}" class="btn btn-primary modificar">Modificar</a>
+                                            </div>
+                                        </form>
+                                    </div>`;
 
         nodoTabla.appendChild(tablaElemento);
     })
+    eventoModificar();
+    eventoSelecionar();
 }
 
 function getRandom(min, max) {
@@ -182,9 +381,26 @@ function removeHp(hp, damage) {
     }
 }
 
-function resolucionDeConflictosLaborales(personaje1, personaje2) {
+function resolucionDeConflictosLaborales(personaje1, personaje2) { // resolución de conflictos laborales mediante pelea de cuchillos
+    const nodoResultado = document.getElementById("resultado");
+    nodoResultado.innerHTML = "";
+    const imagen = document.createElement("img");
+    imagen.setAttribute("src", "../imagenes/resolucion.PNG");
+    imagen.setAttribute("alt", "imagen que muestra como se resulven los conflictos");
+    const comentarios = ["COMIENZA EL COMBATE!!"];
+    const comentaristaPela = [];
+    comentaristaPela.push(document.createElement("p"));
+    nodoResultado.appendChild(imagen);
+
     let hp1 = personaje1.calcularHitPoint();
     let hp2 = personaje2.calcularHitPoint();
+
+    comentaristaPela.push(document.createElement("p"));
+    comentarios.push(`HP ${personaje1.nombre}: ${hp1}`);
+    console.log(`HP ${personaje1.nombre}: ${hp1}`);
+    comentaristaPela.push(document.createElement("p"));
+    comentarios.push(`HP ${personaje2.nombre}: ${hp2}`);
+    console.log(`HP ${personaje2.nombre}: ${hp2}`);
 
     let hit1 = personaje1.calcularPunteria();
     let hit2 = personaje2.calcularPunteria();
@@ -197,33 +413,62 @@ function resolucionDeConflictosLaborales(personaje1, personaje2) {
     ronda = 1;
     while (hp1 != 0 && hp2 != 0) {
         console.log(`RONDA: ${ronda}`);
+        comentaristaPela.push(document.createElement("p"));
+        comentarios.push(`RONDA: ${ronda}`);
         if (targetHit(hit1, def2)) {
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`${personaje1.nombre} ACIERTA GOLPE`);
             console.log(`${personaje1.nombre} ACIERTA GOLPE`);
             hp2 = removeHp(hp2, damage1);
-            console.log(`HP 2: ${hp2}`);
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`HP ${personaje2.nombre}: ${hp2}`);
+            console.log(`HP ${personaje2.nombre}: ${hp2}`);
         }
         else {
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`${personaje1.nombre} FALLA`);
             console.log(`${personaje1.nombre} FALLA`);
         }
         if (targetHit(hit2, def1)) {
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`${personaje2.nombre} ACIERTA GOLPE`);
             console.log(`${personaje2.nombre} ACIERTA GOLPE`);
             hp1 = removeHp(hp1, damage2);
-            console.log(`HP 1: ${hp1}`);
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`HP ${personaje1.nombre}: ${hp1}`);
+            console.log(`HP ${personaje1.nombre}: ${hp1}`);
         }
         else {
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`${personaje2.nombre} FALLA`);
             console.log(`${personaje2.nombre} FALLA`);
         }
         ronda++;
     }
     if (hp1 > hp2) {
-        alert(`${personaje1.nombre} Win`);
+        comentaristaPela.push(document.createElement("p"));
+        comentarios.push(`${personaje1.nombre} Win`);
+        console.log(`${personaje1.nombre} Win`);
+        alert(`${personaje1.nombre} Win`)
     }
     else {
         if (hp2 > hp1) {
-            alert(`${personaje2.nombre} Win`);
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push(`${personaje2.nombre} Win`);
+            console.log(`${personaje2.nombre} Win`);
+            alert(`${personaje2.nombre} Win`)
         }
         else {
+            comentaristaPela.push(document.createElement("p"));
+            comentarios.push("Empate");
+            console.log("Empate");
             alert("Empate");
         }
+    }
+
+    for (comment of comentaristaPela) {
+        comment.innerText = comentarios[0];
+        comentarios.shift();
+        nodoResultado.appendChild(comment);
     }
 }
