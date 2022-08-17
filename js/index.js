@@ -34,6 +34,7 @@ let personajes = [];
 let personajeId;
 let p;
 let selecionados = [];
+let intentos = 0;
 for (const objeto of personajesGuardados) {
     personajes.push(new Personaje(objeto));
 }
@@ -279,10 +280,58 @@ function eventoSelecionar() {
 const btnLuchar = document.getElementById("luchar");
 btnLuchar.onclick = () => {
     [a, b] = selecionados;
-    selecionados.length === 2 && resolucionDeConflictosLaborales(catalogoPersonajes.personajes.find(x => x.id == a), catalogoPersonajes.personajes.find(x => x.id == b));
+    if (selecionados.length === 2) {
+        resolucionDeConflictosLaborales(catalogoPersonajes.personajes.find(x => x.id == a), catalogoPersonajes.personajes.find(x => x.id == b));
+        intentos = intentos === 0 ? intentos : --intentos;
+    }
+    else {
+        if (intentos === 0) {
+            Swal.fire({
+                title: `No seleciono trabajadores suficientes`,
+                text: `Selecione 2 trabajadores para enfrentarse`,
+                icon: `error`,
+                confirmButtonText: `Ya entendí`
+            });
+            intentos++;
+        }
+        else {
+            if (intentos < 2) {
+                Swal.fire({
+                    title: `No seleciono trabajadores suficientes`,
+                    text: `Usted no ha entendido!! selecione 2 trabajadores (luchadores) primero.`,
+                    icon: `error`,
+                    confirmButtonText: `Ahora creo que entendí!`
+                });
+                intentos++;
+            }
+            else {
+                Swal.fire({
+                    title: `No seleciono trabajadores suficientes`,
+                    text: `Usted debe ser un tester (debería crear su personaje), selecionaré los luchadores por usted`,
+                    icon: `error`,
+                    confirmButtonText: `Ahora si`
+                });
+                const nodoCard = document.getElementsByClassName("card");
+                if (selecionados.length == 1) {
+                    Swal.fire({
+                        title: `No señor`,
+                        imageUrl: `../imagenes/agujero_trampa.png`,
+                        text: `Se lo que estas pensando pero no funcionara. Selecionaré el faltante`,
+                        confirmButtonText: `Caer en la trampa`
+                    });
+                }
+                for (let i = 0; selecionados.length < 2; i++) {
+                    personajeId = nodoCard[i].children[1].id.split("formulario")[1];
+                    nodoCard[i].setAttribute("style", "border: solid 3px #1eff00");
+                    !selecionados.includes(personajeId) && selecionados.push(personajeId);
+                }
+            }
+        }
+    }
 }
 
 function nuevoPersonaje() {
+    selecionados = [];
     const nodoTabla = document.getElementById("tabla");
     const tablaElemento = document.createElement("div");
     tablaElemento.innerHTML = `<div class="card" style="width: 100%;">
@@ -381,7 +430,7 @@ function removeHp(hp, damage) {
     }
 }
 
-function resolucionDeConflictosLaborales(personaje1, personaje2) { // resolución de conflictos laborales mediante pelea de cuchillos
+function resolucionDeConflictosLaborales(personaje1, personaje2) { // resolución de conflictos laborales por medio de peleas con cuchillos
     const nodoResultado = document.getElementById("resultado");
     nodoResultado.innerHTML = "";
     const imagen = document.createElement("img");
@@ -449,20 +498,35 @@ function resolucionDeConflictosLaborales(personaje1, personaje2) { // resolució
         comentaristaPela.push(document.createElement("p"));
         comentarios.push(`${personaje1.nombre} Win`);
         console.log(`${personaje1.nombre} Win`);
-        alert(`${personaje1.nombre} Win`)
+        Swal.fire({
+            title: `${personaje1.nombre} Win`,
+            text: `${personaje1.nombre} es quien tiene la razón, en la ronda ${ronda} con ${hp1} HP de sobra.`,
+            icon: `success`,
+            confirmButtonText: `Felicitar`
+        })
     }
     else {
         if (hp2 > hp1) {
             comentaristaPela.push(document.createElement("p"));
             comentarios.push(`${personaje2.nombre} Win`);
             console.log(`${personaje2.nombre} Win`);
-            alert(`${personaje2.nombre} Win`)
+            Swal.fire({
+                title: `${personaje2.nombre} Win`,
+                text: `${personaje2.nombre} es quien tiene la razón, en la ronda ${ronda} con ${hp2} HP de sobra.`,
+                icon: `success`,
+                confirmButtonText: `Felicitar`
+            })
         }
         else {
             comentaristaPela.push(document.createElement("p"));
             comentarios.push("Empate");
             console.log("Empate");
-            alert("Empate");
+            Swal.fire({
+                title: `Empate`,
+                text: `ambos tienen la razón, en la ronda ${ronda}`,
+                icon: `info`,
+                confirmButtonText: `Buuu`
+            })
         }
     }
 
