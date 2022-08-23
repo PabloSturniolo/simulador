@@ -35,6 +35,7 @@ let personajeId;
 let p;
 let selecionados = [];
 let intentos = 0;
+let cargo = false;
 for (const objeto of personajesGuardados) {
     personajes.push(new Personaje(objeto));
 }
@@ -327,6 +328,20 @@ btnLuchar.onclick = () => {
                 }
             }
         }
+    }
+}
+
+const btnCargar = document.getElementById("cargar");
+btnCargar.onclick = async () => {
+    if (!cargo) {
+        cargo = true;
+        let res = await fetch("../js/json/personajes.json");
+        let json = await res.json();
+        for (const objeto of json) {
+            objeto.id = id++;
+            personajes.push(new Personaje(objeto));
+        }
+        listarPersonajes();
     }
 }
 

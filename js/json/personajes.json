@@ -1,0 +1,44 @@
+[
+    {
+        "id" : 0,
+        "imagen": "personaje.jpeg",
+        "nombre": "Gaston",
+        "clase": "Tester",
+        "nivel": 3,
+        "fuerza": 20,
+        "destreza": 20,
+        "constitucion": 20,
+        "inteligencia": 20,
+        "sabiduria": 20,
+        "carisma": 20,
+        "danio": 20
+    },
+    {
+        "id" : 0,
+        "imagen": "personaje.jpeg",
+        "nombre": "Francisco",
+        "clase": "Project Manager",
+        "nivel": 3,
+        "fuerza": 20,
+        "destreza": 20,
+        "constitucion": 20,
+        "inteligencia": 20,
+        "sabiduria": 20,
+        "carisma": 20,
+        "danio": 20
+    },
+    {
+        "id" : 0,
+        "imagen": "personaje.jpeg",
+        "nombre": "Mengano",
+        "clase": "User",
+        "nivel": 3,
+        "fuerza": 14,
+        "destreza": 12,
+        "constitucion": 26,
+        "inteligencia": 8,
+        "sabiduria": 8,
+        "carisma": 24,
+        "danio": 30
+    }
+]
